@@ -31,11 +31,12 @@ int BrowseForOpen()
     {
         while (errorflag<0)
         {
-            printf("\n");
+            printf("###########################################\n");
             scanf("%s", inputtext);
+            printf("###########################################\n");
             errorflag=stat(inputtext,&inode);
             if (errorflag<0)
-                fprintf(stderr, "Not found! (Not a file or directory)\n");
+                fprintf(stderr, "Nem található! (Nem fájl vagy könyvtár)\n");
         }
         errorflag = -1;
 
@@ -54,6 +55,11 @@ int BrowseForOpen()
     }
 
     filepointer = open(inputtext, O_RDONLY);
+    if (filepointer < 0)
+    {
+    	fprintf(stderr, "%s\n", "Fájlmegnyitás sikertelen!");
+       	exit(1);
+    }
 
    return filepointer;
 
@@ -105,48 +111,6 @@ unsigned char* Unwrap(char* Pbuff, int NumCh)
     return string;
 }
 
-unsigned char* TestArray(int *NumCh)
-{
-    unsigned int randnum;
-    int i = 0;
-    char* string = "Tesztszoveg";
-    *NumCh = strlen(string);
-    unsigned char* array = (unsigned char*) malloc((*NumCh)*3);
-    for (int i=0; i<(*NumCh)*3; i++)
-    {
-        array[i] = 0;
-    }
-
-    while (i != (*NumCh)*3)
-    {
-        srand(time(NULL));
-        if (i%3 == 0 || i%3 == 3)
-        {
-            randnum = rand()%64;
-            array[i] = randnum << 2;
-        }
-        else
-        {
-            randnum = rand()%32;
-            array[i] = randnum << 3;
-        }
-        i++;
-    }
-    i=0;
-    while (i != (*NumCh)*3)
-    {
-        for (int j=0; j<(*NumCh); j++)
-        {
-            unsigned char kar = string[j];
-            array[i] = array[i] | ((0b11000000 & kar)>>6);
-            array[i+1] = array[i+1] | ((0b00111000 & kar)>>3);
-            array[i+2] = array[i+2] | (0b00000111 & kar);
-            i += 3;
-        }
-
-    }
-    return array;
-}
 
 int main(int argc, char* argv[])
 {
@@ -155,14 +119,13 @@ int main(int argc, char* argv[])
     char filename[1000];
     if (argc == 1)
     {
-        BrowseForOpen();
-        return 0;
+        in = BrowseForOpen();
     }
     else
     {
         if (strcmp(argv[1], "--version")==0)
         {
-            printf("v. 0.01\nDate:2019.02.18.\nName");
+            printf("v. 0.1\nDate:2019.02.18.\nName");
             return 0;
         }
         if (strcmp(argv[1], "--help")==0)
@@ -171,16 +134,17 @@ int main(int argc, char* argv[])
             return 0;
         }
         strcpy(filename, argv[1]);
-        printf("%s\n",filename);
-        unsigned char* abc_array= TestArray(&NumCh);
-        unsigned char* stringarray = Unwrap(abc_array, NumCh);
-        printf("%s\n", stringarray);
-        free(stringarray);
 
         in = open(filename,O_RDONLY);
-        unsigned char* filearray = ReadPixels(in, &NumCh);
+        if (in < 0)
+        {
+        	fprintf(stderr, "%s\n", "Fájlmegnyitás sikertelen!");
+        	exit(1);
+        }
+    }
+    	unsigned char* filearray = ReadPixels(in, &NumCh);
         unsigned char* textarray = Unwrap(filearray, NumCh);
         printf("%s", textarray);
+
         return 0;
-    }
 }
