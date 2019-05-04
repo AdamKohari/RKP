@@ -6,6 +6,9 @@
 #include <sys/stat.h>
 #include <fcntl.h>
 #include <dirent.h>
+#include <sys/socket.h>
+#include <netinet/in.h>
+#include <arpa/inet.h>
 
 
 int BrowseForOpen()
@@ -111,6 +114,68 @@ unsigned char* Unwrap(char* Pbuff, int NumCh)
     return string;
 }
 
+int Post(char *neptunID, char *message, int NumCh)
+{
+   int s;
+   int flag;
+   int bytes;
+   int err;
+   unsigned int server_size;
+   char on;
+   char buffer[1024];
+   char rcvbuffer[1024];
+   struct sockaddr_in server;
+
+   on   = 1;
+   flag = 0;
+   server.sin_family      = AF_INET;
+   server.sin_addr.s_addr = inet_addr("193.6.135.148");
+   server.sin_port        = htons(80);
+   server_size = sizeof server;
+
+   s = socket(AF_INET, SOCK_STREAM, 0 );
+   if ( s < 0 ) 
+		return 2;
+
+   setsockopt(s, SOL_SOCKET, SO_REUSEADDR, (char *)&on, sizeof on);
+   setsockopt(s, SOL_SOCKET, SO_KEEPALIVE, (char *)&on, sizeof on);
+
+   err = connect( s, (struct sockaddr *) &server, server_size);
+   if ( err < 0 ) 
+   {
+		close(s);
+		return 3;
+   }
+   
+
+   int contentl = strlen("NeptunID=ABC123&PostedText=") + NumCh;
+   snprintf(buffer, sizeof(buffer), 
+   	"POST /~vargai/post.php HTTP/1.1\r\nHost: irh.inf.unideb.hu\r\nContent-Length: %d\r\nContent-Type: application/x-www-form-urlencoded\r\n\r\nNeptunID=%s&PostedText=%s", 
+   contentl, neptunID, message);
+
+   bytes = send(s, buffer, strlen(buffer)+1, flag);
+   if ( bytes <= 0 ) 
+   {
+		close(s);
+		return 4;
+   }
+
+   bytes = recv(s, rcvbuffer, 1024, flag);
+   if ( bytes < 0 ) 
+   {
+		close(s);
+		return 5;
+   }
+
+   if (strstr(rcvbuffer, "The message has been received.") == NULL)
+   {
+   		close(s);
+   		return 6;
+   }
+
+   close(s);
+   return 0;
+}
 
 int main(int argc, char* argv[])
 {
@@ -144,7 +209,16 @@ int main(int argc, char* argv[])
     }
     	unsigned char* filearray = ReadPixels(in, &NumCh);
         unsigned char* textarray = Unwrap(filearray, NumCh);
-        printf("%s", textarray);
+        switch (Post("Z8MVK2", textarray, NumCh))
+        {
+        	case 0: printf("A dekódolt szöveg sikeresen postolva lett a webszerverre!\n"); break;
+        	case 2: fprintf(stderr, "Socket létrehozási hiba!\n"); break;
+        	case 3: fprintf(stderr, "Csatlakozási hiba!\n"); break;
+        	case 4: fprintf(stderr, "Küldési hiba!\n"); break;
+        	case 5: fprintf(stderr, "Fogadási hiba!\n"); break;
+        	case 6: fprintf(stderr, "A szervernek nem sikerült feldolgoznia a kérést!");
+        }
 
+        close(in);
         return 0;
 }
