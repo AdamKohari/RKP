@@ -13,12 +13,12 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[1], "--version")==0)
         {
-            printf("v. 0.1\nDate:2019.02.18.\nName");
+            printf("v. 0.1\nDate:2019.05.05.\nKohari Adam");
             return 0;
         }
         if (strcmp(argv[1], "--help")==0)
         {
-            printf("Help");
+            printf("A program futtatasa ketfelekepp lehetseges:\n- A dekodolando fajl eleresi utjat parancssori argumentumkent megadva\n- Megadott argumentum nelkul inditva, a beepitett fajltallozo alprogrammal");
             return 0;
         }
         strcpy(filename, argv[1]);
@@ -26,7 +26,7 @@ int main(int argc, char* argv[])
         in = open(filename,O_RDONLY);
         if (in < 0)
         {
-        	fprintf(stderr, "%s\n", "Fájlmegnyitás sikertelen!");
+        	fprintf(stderr, "%s\n", "Fajlmegnyitas sikertelen!");
         	exit(1);
         }
     }
@@ -39,14 +39,15 @@ int main(int argc, char* argv[])
 
     switch (Post("Z8MVK2", textarray, NumCh))
     {
-        case 0: printf("A dekódolt szöveg sikeresen postolva lett a webszerverre!\n"); break;
-        case 2: fprintf(stderr, "Socket létrehozási hiba!\n"); break;
-    	case 3: fprintf(stderr, "Csatlakozási hiba!\n"); break;
-    	case 4: fprintf(stderr, "Küldési hiba!\n"); break;
-        case 5: fprintf(stderr, "Fogadási hiba!\n"); break;
-        case 6: fprintf(stderr, "A szervernek nem sikerült feldolgoznia a kérést!");
+        case 0: printf("A dekodolt szoveg sikeresen postolva lett a webszerverre!\n"); break;
+        case 2: fprintf(stderr, "Socket letrehozasi hiba!\n"); break;
+    	case 3: fprintf(stderr, "Csatlakozasi hiba!\n"); break;
+    	case 4: fprintf(stderr, "Kuldesi hiba!\n"); break;
+        case 5: fprintf(stderr, "Fogadasi hiba!\n"); break;
+        case 6: fprintf(stderr, "A szervernek nem sikerult feldolgoznia a kerest!");
     }
 
     close(in);
-     return 0;
+    free(textarray);
+    return 0;
 }

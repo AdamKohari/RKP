@@ -20,7 +20,7 @@ void WhatToDo(int sig)
 	pid_t pid;
 	if (sig == SIGALRM)
 	{
-		fprintf(stderr, "A program túl sokáig futott!");
+		fprintf(stderr, "A program tul sokaig futott!");
 		kill(getpid(), SIGKILL);
 	}
 
@@ -63,7 +63,7 @@ int BrowseForOpen()
             printf("###########################################\n");
             errorflag=stat(inputtext,&inode);
             if (errorflag<0)
-                fprintf(stderr, "Nem található! (Nem fájl vagy könyvtár)\n");
+                fprintf(stderr, "Nem talalhato! (Nem fajl vagy konyvtar)\n");
         }
         errorflag = -1;
 
@@ -84,7 +84,7 @@ int BrowseForOpen()
     filepointer = open(inputtext, O_RDONLY);
     if (filepointer < 0)
     {
-    	fprintf(stderr, "%s\n", "Fájlmegnyitás sikertelen!");
+    	fprintf(stderr, "%s\n", "Fajlmegnyitas sikertelen!");
        	exit(1);
     }
 
