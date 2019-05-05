@@ -13,12 +13,12 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[1], "--version")==0)
         {
-            printf("v. 0.1\nDate:2019.05.05.\nKohari Adam");
+            printf("v. 0.1\nDate:2019.05.05.\nKohari Adam\n");
             return 0;
         }
         if (strcmp(argv[1], "--help")==0)
         {
-            printf("A program futtatasa ketfelekepp lehetseges:\n- A dekodolando fajl eleresi utjat parancssori argumentumkent megadva\n- Megadott argumentum nelkul inditva, a beepitett fajltallozo alprogrammal");
+            printf("A program futtatasa ketfelekepp lehetseges:\n- A dekodolando fajl eleresi utjat parancssori argumentumkent megadva\n- Megadott argumentum nelkul inditva, a beepitett fajltallozo alprogrammal\n");
             return 0;
         }
         strcpy(filename, argv[1]);
