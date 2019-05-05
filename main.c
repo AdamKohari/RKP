@@ -13,7 +13,7 @@ int main(int argc, char* argv[])
     {
         if (strcmp(argv[1], "--version")==0)
         {
-            printf("v. 0.1\nDate:2019.05.05.\nKohari Adam\n");
+            printf("v. 1.0\nDate:2019.05.06.\nKohari Adam\n");
             return 0;
         }
         if (strcmp(argv[1], "--help")==0)
